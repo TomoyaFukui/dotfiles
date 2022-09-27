@@ -10,7 +10,7 @@ GHQ_ROOT="${XDG_DATA_HOME}/ghq"
 REPO_ROOT="${GHQ_ROOT}/github.com/TomoyaFukui/dotfiles"
 
 if [ ! -d "${REPO_ROOT}" ]; then
-    command git clone "${REPO_URI}" "${REPO_ROOT}"
+    command git clone -b ubuntu "${REPO_URI}" "${REPO_ROOT}"
 else
     cd "${REPO_ROOT}"
     command git pull origin master
