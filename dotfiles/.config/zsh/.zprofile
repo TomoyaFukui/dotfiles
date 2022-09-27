@@ -1,8 +1,8 @@
 # brew
-if (( ${+commands[brew]} )); then
-    # Avoid the brew doctor warning: 'Putting non-prefixed hogehoge'
-    alias brew="env PATH=${(j':')path_default[@]} brew"
-fi
+# if (( ${+commands[brew]} )); then
+#     # Avoid the brew doctor warning: 'Putting non-prefixed hogehoge'
+# alias brew="env PATH=${(j':')path_default[@]} brew"
+# fi
 # export HOMEBREW_PREFIX="${HOME}/.linuxbrew";
 # export HOMEBREW_CELLAR="${HOME}/.linuxbrew/Cellar";
 # export HOMEBREW_REPOSITORY="${HOME}/.linuxbrew/Homebrew";

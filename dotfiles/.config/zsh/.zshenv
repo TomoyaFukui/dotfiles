@@ -63,7 +63,7 @@ if [[ ! -d "${XDG_RUNTIME_DIR}" ]]; then
 fi
 
 # brew
-export PATH="${HOME}/.linuxbrew/bin:$PATH"
+export PATH="home/linuxbrew/.linuxbrew/bin:$PATH"
 . "${XDG_DATA_HOME}/poetry/env"
 # pyenv
 eval "$(pyenv init --path)"

@@ -57,34 +57,6 @@ zinit light zsh-users/zsh-completions
 zinit ice wait='0' lucid
 zinit light hlissner/zsh-autopair
 
-zinit ice \
-    as='program' \
-    from='gh-r' \
-    ver='latest' \
-    mv='powerline-go* -> powerline-go' \
-    pick='powerline-go'
-zinit light justjanne/powerline-go
-powerline_precmd() {
-    PS1="$( \
-        "${ZINIT[HOME_DIR]}/plugins/justjanne---powerline-go/powerline-go" \
-        -error "$?" \
-        -shell zsh \
-        -newline \
-        -priority 'root,user,ssh,perms,git-branch,git-status,exit,cwd-path' \
-        -path-aliases '~/.local/share/ghq=@ghq'
-    )"
-}
-install_powerline_precmd() {
-    local func
-    for func in "${precmd_functions[@]}"; do
-        if [[ "${func}" == 'powerline_precmd' ]]; then
-            return 0
-        fi
-    done
-    precmd_functions+=('powerline_precmd')
-}
-install_powerline_precmd
-
 zinit ice wait='0' lucid \
     atload="
         bindkey '^G' anyframe-widget-cd-ghq-repository
