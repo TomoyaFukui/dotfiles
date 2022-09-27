@@ -109,3 +109,28 @@ zle -N zle-keymap-select
 ### Zinit ###
 # Repo: https://github.com/zdharma/zinit
 . "${XDG_CONFIG_HOME}/zsh/plugin/zinit/zinit.zsh"
+
+### powerline-go
+powerline_precmd() {
+    PS1="$( \
+        "$GOPATH/bin/powerline-go" \
+        -error "$?" \
+        -shell zsh \
+        -newline \
+        -priority 'root,user,ssh,perms,git-branch,git-status,exit,cwd-path' \
+        -path-aliases '~/.local/share/ghq=@ghq'
+    )"
+}
+
+function install_powerline_precmd() {
+  for s in "${precmd_functions[@]}"; do
+    if [ "$s" = "powerline_precmd" ]; then
+      return
+    fi
+  done
+  precmd_functions+=(powerline_precmd)
+}
+
+if [ "$TERM" != "linux" ] && [ -f "$GOPATH/bin/powerline-go" ]; then
+    install_powerline_precmd
+fi
