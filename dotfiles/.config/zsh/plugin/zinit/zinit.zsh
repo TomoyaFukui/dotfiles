@@ -26,7 +26,7 @@ zinit ice lucid \
     nocompile='!'
 zinit light seebi/dircolors-solarized
 
-zinit ice wait='0' lucid \
+zinit ice lucid \
     atclone='
         . ./fast-syntax-highlighting.plugin.zsh
         fast-theme -q XDG:solarized-dark
