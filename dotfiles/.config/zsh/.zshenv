@@ -66,4 +66,4 @@ fi
 export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 # . "${XDG_DATA_HOME}/poetry/env"
 # pyenv
-eval "$(pyenv init --path)"
+# eval "$(pyenv init --path)"
