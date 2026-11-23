@@ -46,9 +46,11 @@ brew "tree"
 brew "fzf"
 brew "ghq"
 brew "node"
-brew "exa"
+brew "eza"
 brew "direnv"
 # brew "asdf"
 # brew "webp"
 # brew "wget"
 # brew "zeromq"
+# Terminal font for Powerline glyphs (macOS)
+cask "font-jetbrains-mono-nerd-font" if OS.mac?

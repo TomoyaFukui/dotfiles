@@ -25,7 +25,16 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 alias c='clear'
+alias g='git status'
 alias sudo='sudo -E '
+
+# Repo: https://github.com/eza-community/eza
+if (( ${+commands[eza]} )); then
+    alias ls='eza --group-directories-first --icons --classify'
+    alias la='eza -a --group-directories-first --icons --classify'
+    alias ll='eza -hal --group-directories-first --icons --classify'
+    alias tree='eza --tree --group-directories-first --icons --classify -I "node_modules"'
+fi
 
 ### Options ###
 # Doc: http://zsh.sourceforge.net/Doc/Release/Options.html
@@ -106,6 +115,39 @@ zle -N zle-line-init
 zle -N zle-line-finish
 zle -N zle-keymap-select
 
+if (( ${+commands[pyenv]} )); then
+    eval "$(pyenv init - zsh)"
+fi
+
+PROMPT='%F{cyan}%~%f %# '
+
 ### Zinit ###
 # Repo: https://github.com/zdharma/zinit
 . "${XDG_CONFIG_HOME}/zsh/plugin/zinit/zinit.zsh"
+
+if (( ! ${+functions[zinit]} )); then
+    autoload -Uz compinit
+    compinit
+    . "${ZDOTDIR}/.zshrc_lazy"
+fi
+
+powerline_bin="${ZINIT[PLUGINS_DIR]:-${XDG_DATA_HOME}/zsh/plugin/zinit/plugins}/justjanne---powerline-go/powerline-go"
+if [[ ! -x "${powerline_bin}" ]]; then
+    powerline_bin="${commands[powerline-go]}"
+fi
+if [[ -x "${powerline_bin}" ]]; then
+    powerline_precmd() {
+        local -r exit_code=$?
+        PS1="$(
+            "${powerline_bin}" \
+                -error "${exit_code}" \
+                -shell zsh \
+                -mode patched \
+                -newline \
+                -priority 'root,user,ssh,perms,git-branch,git-status,exit,cwd-path' \
+                -path-aliases '~/.local/share/ghq=@ghq'
+        )"
+    }
+    autoload -Uz add-zsh-hook
+    add-zsh-hook precmd powerline_precmd
+fi

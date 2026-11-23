@@ -6,50 +6,38 @@ unsetopt GLOBAL_RCS
 
 ### PATH ###
 typeset -gU PATH path
-# Default
-typeset -U path_default
-path_default=(
-    '/usr/local/bin'(N-/)
-    '/usr/bin'(N-/)
-    '/bin'(N-/)
-    '/usr/local/sbin'(N-/)
-    '/usr/sbin'(N-/)
-    '/sbin'(N-/)
-)
-path=("${path_default[@]}")
-path=(
-    # macOS {{{
-    '/usr/local/opt/binutils/bin'(N-/)
-    '/usr/local/opt/coreutils/libexec/gnubin'(N-/)
-    '/usr/local/opt/findutils/libexec/gnubin'(N-/)
-    '/usr/local/opt/gnu-sed/libexec/gnubin'(N-/)
-    '/usr/local/opt/gnu-tar/libexec/gnubin'(N-/)
-    '/usr/local/opt/grep/libexec/gnubin'(N-/)
-    '/usr/local/opt/curl/bin'(N-/)
-    '/usr/local/opt/openssl@1.1/bin'(N-/)
-    '/usr/local/opt/python/libexec/bin'(N-/)
-    # }}}
-    "${path[@]}"
-)
+path=("${HOME}/.local/bin"(N-/) "${path[@]}")
+
+### Homebrew ###
+for brew_bin in "${commands[brew]}" /opt/homebrew/bin/brew /usr/local/bin/brew \
+    "${HOME}/.linuxbrew/bin/brew" /home/linuxbrew/.linuxbrew/bin/brew; do
+    if [[ -x "${brew_bin}" ]]; then
+        eval "$("${brew_bin}" shellenv zsh)"
+        break
+    fi
+done
+unset brew_bin
+
+if [[ -n "${HOMEBREW_PREFIX}" ]]; then
+    path=(
+        "${HOMEBREW_PREFIX}/opt/binutils/bin"(N-/)
+        "${HOMEBREW_PREFIX}/opt/"{coreutils,findutils,gnu-sed,gnu-tar,grep}/libexec/gnubin(N-/)
+        "${HOMEBREW_PREFIX}/opt/"{curl,openssl@1.1}/bin(N-/)
+        "${HOMEBREW_PREFIX}/opt/python/libexec/bin"(N-/)
+        "${path[@]}"
+    )
+    manpath=(
+        "${HOMEBREW_PREFIX}/opt/"{coreutils,findutils,gnu-sed,gnu-tar,grep}/libexec/gnuman(N-/)
+        "${manpath[@]}"
+    )
+fi
 
 ### FPATH ###
 fpath=(
     "${ZDOTDIR}/func"(N-/)
     "${ZDOTDIR}/func_comp"(N-/)
-    # asdf-vm
-    "${ASDF_DATA_DIR}/completions"(N-/)
+    "${ASDF_DATA_DIR:-${HOME}/.asdf}/completions"(N-/)
     "${fpath[@]}"
-)
-
-### MANPATH ###
-# macOS
-manpath=(
-    '/usr/local/opt/coreutils/libexec/gnuman'(N-/)
-    '/usr/local/opt/findutils/libexec/gnuman'(N-/)
-    '/usr/local/opt/gnu-sed/libexec/gnuman'(N-/)
-    '/usr/local/opt/gnu-tar/libexec/gnuman'(N-/)
-    '/usr/local/opt/grep/libexec/gnuman'(N-/)
-    "${manpath[@]}"
 )
 
 ### XDG Base Directory ###
@@ -62,8 +50,14 @@ if [[ ! -d "${XDG_RUNTIME_DIR}" ]]; then
     command mkdir -m 700 -p -- "${XDG_RUNTIME_DIR}"
 fi
 
-# brew
-export PATH="${HOME}/.linuxbrew/bin:$PATH"
-. "${XDG_DATA_HOME}/poetry/env"
-# pyenv
-eval "$(pyenv init --path)"
+### Poetry ###
+if [[ -r "${XDG_DATA_HOME}/poetry/env" ]]; then
+    . "${XDG_DATA_HOME}/poetry/env"
+fi
+
+### pyenv ###
+export PYENV_ROOT="${PYENV_ROOT:-${HOME}/.pyenv}"
+path=("${PYENV_ROOT}/bin"(N-/) "${path[@]}")
+if (( ${+commands[pyenv]} )); then
+    eval "$(pyenv init --path)"
+fi
