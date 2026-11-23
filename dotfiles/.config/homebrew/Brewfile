@@ -14,6 +14,7 @@
 # brew "bash"
 # brew "bash-completion2"
 brew "zsh"
+brew "powerline-go"
 brew "fish"
 
 # Other packages
@@ -52,3 +53,5 @@ brew "direnv"
 # brew "webp"
 # brew "wget"
 # brew "zeromq"
+# Terminal font for Powerline glyphs (macOS)
+cask "font-jetbrains-mono-nerd-font" if OS.mac?

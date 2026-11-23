@@ -25,6 +25,7 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 alias c='clear'
+alias g='git status'
 alias sudo='sudo -E '
 
 ### Options ###
@@ -106,6 +107,36 @@ zle -N zle-line-init
 zle -N zle-line-finish
 zle -N zle-keymap-select
 
+if (( ${+commands[pyenv]} )); then
+    eval "$(pyenv init - zsh)"
+fi
+
+PROMPT='%F{cyan}%~%f %# '
+
+powerline_bin="${commands[powerline-go]:-${XDG_DATA_HOME}/zsh/plugin/zinit/plugins/justjanne---powerline-go/powerline-go}"
+if [[ -x "${powerline_bin}" ]]; then
+    powerline_precmd() {
+        local -r exit_code=$?
+        PS1="$(
+            "${powerline_bin}" \
+                -error "${exit_code}" \
+                -shell zsh \
+                -mode patched \
+                -newline \
+                -priority 'root,user,ssh,perms,git-branch,git-status,exit,cwd-path' \
+                -path-aliases '~/.local/share/ghq=@ghq'
+        )"
+    }
+    autoload -Uz add-zsh-hook
+    add-zsh-hook precmd powerline_precmd
+fi
+
 ### Zinit ###
 # Repo: https://github.com/zdharma/zinit
 . "${XDG_CONFIG_HOME}/zsh/plugin/zinit/zinit.zsh"
+
+if (( ! ${+functions[zinit]} )); then
+    autoload -Uz compinit
+    compinit
+    . "${ZDOTDIR}/.zshrc_lazy"
+fi

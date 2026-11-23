@@ -3,15 +3,11 @@
 declare -A ZINIT
 ZINIT[HOME_DIR]="${XDG_DATA_HOME}/zsh/plugin/zinit"
 
-# Auto install
-if [[ ! -f "${ZINIT[HOME_DIR]}/bin/zinit.zsh" ]]; then
-    echo 'Install Zinit'
-    # command git clone 'https://github.com/zdharma/zinit' "${ZINIT[HOME_DIR]}/bin"
-    command git clone 'https://github.com/zdharma-continuum/zinit' "${ZINIT[HOME_DIR]}/bin"
-    . "${ZINIT[HOME_DIR]}/bin/zinit.zsh"
-    zinit self-update
+# Keep the shell usable if the initial clone fails.
+if [[ ! -r "${ZINIT[HOME_DIR]}/bin/zinit.zsh" ]]; then
+    command git clone 'https://github.com/zdharma-continuum/zinit' "${ZINIT[HOME_DIR]}/bin" ||
+        return 0
 fi
-
 . "${ZINIT[HOME_DIR]}/bin/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
@@ -19,12 +15,14 @@ autoload -Uz _zinit
 alias zinit-update='zinit update --all && zinit self-update && zinit compile --all'
 
 ### Plugins ###
-zinit ice wait='1' lucid \
-    atclone='dircolors -b dircolors.256dark > color.zsh' \
-    atpull='%atclone' \
-    pick='color.zsh' \
-    nocompile='!'
-zinit light seebi/dircolors-solarized
+if (( ${+commands[dircolors]} )); then
+    zinit ice wait='1' lucid \
+        atclone='dircolors -b dircolors.256dark > color.zsh' \
+        atpull='%atclone' \
+        pick='color.zsh' \
+        nocompile='!'
+    zinit light seebi/dircolors-solarized
+fi
 
 zinit ice wait='0' lucid \
     atclone='
@@ -56,34 +54,6 @@ zinit light zsh-users/zsh-completions
 
 zinit ice wait='0' lucid
 zinit light hlissner/zsh-autopair
-
-zinit ice \
-    as='program' \
-    from='gh-r' \
-    ver='latest' \
-    mv='powerline-go* -> powerline-go' \
-    pick='powerline-go'
-zinit light justjanne/powerline-go
-powerline_precmd() {
-    PS1="$( \
-        "${ZINIT[HOME_DIR]}/plugins/justjanne---powerline-go/powerline-go" \
-        -error "$?" \
-        -shell zsh \
-        -newline \
-        -priority 'root,user,ssh,perms,git-branch,git-status,exit,cwd-path' \
-        -path-aliases '~/.local/share/ghq=@ghq'
-    )"
-}
-install_powerline_precmd() {
-    local func
-    for func in "${precmd_functions[@]}"; do
-        if [[ "${func}" == 'powerline_precmd' ]]; then
-            return 0
-        fi
-    done
-    precmd_functions+=('powerline_precmd')
-}
-install_powerline_precmd
 
 zinit ice wait='0' lucid \
     atload="
