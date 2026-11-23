@@ -34,14 +34,6 @@ if (( ${+commands[dust]} )); then
     alias du='dust'
 fi
 
-# Repo: https://github.com/ogham/exa
-if (( ${+commands[exa]} )); then
-    alias ls='exa --group-directories-first --icons --classify'
-    alias la='exa -a --group-directories-first --icons --classify'
-    alias ll='exa -hal --group-directories-first --icons --classify'
-    alias tree='exa --tree --group-directories-first --icons --classify -I "node_modules"'
-fi
-
 # Repo: https://github.com/cjbassi/ytop
 if (( ${+commands[ytop]} )); then
     alias top='ytop -c solarized-dark'

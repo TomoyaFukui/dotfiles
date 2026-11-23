@@ -28,6 +28,14 @@ alias c='clear'
 alias g='git status'
 alias sudo='sudo -E '
 
+# Repo: https://github.com/eza-community/eza
+if (( ${+commands[eza]} )); then
+    alias ls='eza --group-directories-first --icons --classify'
+    alias la='eza -a --group-directories-first --icons --classify'
+    alias ll='eza -hal --group-directories-first --icons --classify'
+    alias tree='eza --tree --group-directories-first --icons --classify -I "node_modules"'
+fi
+
 ### Options ###
 # Doc: http://zsh.sourceforge.net/Doc/Release/Options.html
 # Changing Directories
