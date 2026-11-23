@@ -15,6 +15,27 @@ autoload -Uz _zinit
 alias zinit-update='zinit update --all && zinit self-update && zinit compile --all'
 
 ### Plugins ###
+# GitHub release asset names use Go's OS and architecture names.
+load_powerline_go() {
+    local platform arch asset
+    case "${OSTYPE}" in
+        darwin*) platform=darwin ;;
+        linux*) platform=linux ;;
+        *) return 0 ;;
+    esac
+    case "$(uname -m)" in
+        arm64|aarch64) arch=arm64 ;;
+        x86_64|amd64) arch=amd64 ;;
+        *) return 0 ;;
+    esac
+    asset="powerline-go-${platform}-${arch}"
+    zinit ice as'program' from'gh-r' ver'v1.26' bpick"${asset}" \
+        mv"${asset} -> powerline-go" pick'powerline-go'
+    zinit light justjanne/powerline-go
+}
+load_powerline_go
+unfunction load_powerline_go
+
 if (( ${+commands[dircolors]} )); then
     zinit ice wait='1' lucid \
         atclone='dircolors -b dircolors.256dark > color.zsh' \

@@ -14,7 +14,6 @@
 # brew "bash"
 # brew "bash-completion2"
 brew "zsh"
-brew "powerline-go"
 brew "fish"
 
 # Other packages

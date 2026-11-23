@@ -113,7 +113,20 @@ fi
 
 PROMPT='%F{cyan}%~%f %# '
 
-powerline_bin="${commands[powerline-go]:-${XDG_DATA_HOME}/zsh/plugin/zinit/plugins/justjanne---powerline-go/powerline-go}"
+### Zinit ###
+# Repo: https://github.com/zdharma/zinit
+. "${XDG_CONFIG_HOME}/zsh/plugin/zinit/zinit.zsh"
+
+if (( ! ${+functions[zinit]} )); then
+    autoload -Uz compinit
+    compinit
+    . "${ZDOTDIR}/.zshrc_lazy"
+fi
+
+powerline_bin="${ZINIT[PLUGINS_DIR]:-${XDG_DATA_HOME}/zsh/plugin/zinit/plugins}/justjanne---powerline-go/powerline-go"
+if [[ ! -x "${powerline_bin}" ]]; then
+    powerline_bin="${commands[powerline-go]}"
+fi
 if [[ -x "${powerline_bin}" ]]; then
     powerline_precmd() {
         local -r exit_code=$?
@@ -129,14 +142,4 @@ if [[ -x "${powerline_bin}" ]]; then
     }
     autoload -Uz add-zsh-hook
     add-zsh-hook precmd powerline_precmd
-fi
-
-### Zinit ###
-# Repo: https://github.com/zdharma/zinit
-. "${XDG_CONFIG_HOME}/zsh/plugin/zinit/zinit.zsh"
-
-if (( ! ${+functions[zinit]} )); then
-    autoload -Uz compinit
-    compinit
-    . "${ZDOTDIR}/.zshrc_lazy"
 fi
